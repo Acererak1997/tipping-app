@@ -1,11 +1,7 @@
 <template>
   <div id="app">
     <img src="../assets/logo.png" />
-    <h1>新規登録画面</h1>
-    <p>
-      ユーザー名
-      <input type="text" v-model="nickName"/>
-    </p>
+    <h1>ログイン画面</h1>
     <p>
       メールアドレス
       <input type="email" v-model="email" />
@@ -15,36 +11,13 @@
       <input type="password" v-model="password" />
     </p>
     <p>
-      <button @click="register">新規登録</button>
+      <button @click="login">ログイン</button>
     </p>
-    <router-link to="/CreateAccount">ログインはこちら</router-link>
+    <router-link to="/CreateAccount">新規登録はこちら</router-link>
   </div>
 </template>
 
 <script>
-import axios from "../axios-auth.js";
 export default {
-  data() {
-    return {
-      nickName: "",
-      email: "",
-      password: ""
-    };
-  },
-  methods: {
-    register() {
-      axios.post(
-        "/accounts:signUp?key=AIzaSyAwiiNjv-_Lt5bRHNZCFZ0I_02qfIscSNo",
-        {
-          displayName: this.nickName,
-          email: this.email,
-          password: this.password,
-          returnSecureToken: true
-        }
-      ).then(response =>{
-        console.log(response)
-      })
-    }
-  }
 };
 </script>
