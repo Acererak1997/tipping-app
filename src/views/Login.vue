@@ -18,6 +18,32 @@
 </template>
 
 <script>
+import axios from "../plugins/axios.js";
 export default {
+  data() {
+    return {
+      email: "",
+      password: ""
+    };
+  },
+  methods: {
+    login() {
+      axios
+        .post(
+          "accounts:signInWithPassword?key=AIzaSyAwiiNjv-_Lt5bRHNZCFZ0I_02qfIscSNo",
+          {
+            displayName: this.displayName,
+            email: this.email,
+            password: this.password,
+            returnSecureToken: true
+          }
+        )
+        .then(response => {
+          console.log(response);
+        });
+      this.email = "";
+      this.password = "";
+    }
+  }
 };
 </script>
