@@ -4,7 +4,7 @@
     <h1>新規登録画面</h1>
     <p>
       ユーザー名
-      <input type="text" v-model="nickName" />
+      <input type="text" v-model="displayName" />
     </p>
     <p>
       メールアドレス
@@ -22,11 +22,11 @@
 </template>
 
 <script>
-import axios from "../plugins/axios.js"
+import axios from "../plugins/axios.js";
 export default {
   data() {
     return {
-      nickName: "",
+      displayName: "",
       email: "",
       password: ""
     };
@@ -34,8 +34,9 @@ export default {
   methods: {
     register() {
       axios
-        .post({
-          displayName: this.nickName,
+        .post("accounts:signUp?key=AIzaSyAwiiNjv-_Lt5bRHNZCFZ0I_02qfIscSNo", 
+        {
+          displayName: this.displayName,
           email: this.email,
           password: this.password,
           returnSecureToken: true
@@ -43,6 +44,7 @@ export default {
         .then(response => {
           console.log(response);
         });
+      this.displayName = "";
       this.email = "";
       this.password = "";
     }
