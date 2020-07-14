@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Vuex from "vuex";
-
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -22,19 +21,6 @@ export default new Vuex.Store({
     },
     setUser(state, data) {
       state.user.data = data;
-    }
-  },
-  actions: {
-    commitUser({ commit }, user) {
-      commit("setLoggedin", user !== null)
-      if (user) {
-        commit("setUser", {
-          displayName: user.displayName,
-          email: user.email
-        })
-      } else {
-        commit("setUser", null)
-      }
-    }
+    },
   }
 })

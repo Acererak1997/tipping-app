@@ -20,7 +20,14 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
 firebase.auth().onAuthStateChanged(user => {
-  store.dispatch("commitUser", user);
+  store.commit("setLoggedin", user !== null)
+  if (!user) {
+    store.commit("setUser", null);
+  } else {
+      store.commit("setUser", {
+        displayName: user.displayName
+      });
+  }
 });
 
 new Vue({
