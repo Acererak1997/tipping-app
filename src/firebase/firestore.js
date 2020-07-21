@@ -1,4 +1,5 @@
 import firebase from 'firebase'
+import store from '../store/store'
 import 'firebase/firestore'
 
 const firebaseConfig = {
@@ -12,8 +13,19 @@ const firebaseConfig = {
   measurementId: "G-08QB7Q99FJ"
 };
 
-const firebaseApp = firebase.initializeApp(firebaseConfig, exercise-vue);
+const firebaseApp = firebase.initializeApp(firebaseConfig, 'exercise-vue');
 const firestore = firebaseApp.firestore()
 firestore.settings({ timestampsInSnapshots: true })
+
+firebase.auth().onAuthStateChanged(user => {
+  store.commit("setLoggedin", user !== null)
+  if (!user) {
+    store.commit("setUser", null);
+  } else {
+      store.commit("setUser", {
+        displayName: user.displayName
+      });
+  }
+});
 
 export default firestore

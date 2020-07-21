@@ -4,7 +4,7 @@
     <input type="text" placeholder="アカウント名" v-model="displayName" required />
     <input type="text" placeholder="メールアドレス" v-model="email" required />
     <input type="password" placeholder="パスワード" v-model="password" required />
-    <button @click="register">新規登録</button>
+    <button @click="register(); refUser()">新規登録</button>
     <p>
       <router-link to="/">ログインはこちらから</router-link>
     </p>
@@ -40,6 +40,22 @@ export default {
        .catch(err => {
          this.error = err.message
        });
+    },
+    refUser(){
+      const userRef = firebase.firestore().collection('users');
+
+      const initDate = {
+        DisplayName: this.displayName,
+        Wallet: 2000
+      };
+
+      userRef.add(initDate)
+      .then(docRef => {
+        console.log(docRef.id);
+      })
+      .catch(error =>{
+        console.log(error);
+      })
     }
   }
 };
