@@ -1,7 +1,7 @@
 <template>
   <div>
-    <p>{{ user.data.displayName }}さん、ようこそ！</p>
-    <p>残高： {{ user.wallet }}円</p>
+    <p>{{ currentUser.data.displayName }}さん、ようこそ！</p>
+    <p>残高： {{ currentUser.wallet }}</p>
     <button @click="logOut">ログアウト</button>
     <h1>ユーザー一覧</h1>
 
@@ -9,40 +9,53 @@
       <tr>
         <th>ユーザー名</th>
       </tr>
-      <tr v-for="user in users" :key="user.id">
+      <tr v-for="(user, index) in users" :key="user.id">
         <td>{{ user.name }}</td>
-        <td>          
+        <td>
           <button @click="openModal(user)">walletの確認</button>
           <modal :val="postUser" v-show="modal" @close="closeModal" />
         </td>
         <td>
-          <button>送る</button>
+          <button @click="sendMoneyModal(index)">送る</button>
+          <sendMoneyModal
+            :val="currentUser.wallet"
+            v-show="sendMoney"
+            @close="sendMoneyModal"
+            :value="value"
+            @input="value = $event"
+            @transfer="moneyTransfer"
+          />
         </td>
       </tr>
     </table>
-
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import firebase from "firebase";
-import Modal from "./modal/modal"
+import Modal from "./modal/modal";
+import sendMoneyModal from "./modal/sendMoneyModal";
+import store from '../store/store'
 
 export default {
   components: {
-      Modal
-    },
+    Modal,
+    sendMoneyModal
+  },
   data() {
     return {
       users: [],
       modal: false,
-      postUser: '',
+      postUser: "",
+      sendMoney: false,
+      index: "",
+      value: ""
     };
   },
   computed: {
     ...mapGetters({
-      user: "user"
+      currentUser: "user"
     })
   },
   created() {
@@ -61,7 +74,7 @@ export default {
           const user = doc.data();
           user.id = doc.id;
           // this.users.push(user)
-          console.log(user);
+          // console.log(user);
         });
       });
   },
@@ -80,8 +93,29 @@ export default {
       this.modal = true;
       this.postUser = user;
     },
-    closeModal (){
+    closeModal() {
       this.modal = false;
+    },
+    sendMoneyModal(index) {
+      this.sendMoney = !this.sendMoney;
+      this.index = index;
+    },
+    moneyTransfer() {
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(this.users[this.index].id)
+        .update({
+          Wallet: Number(this.users[this.index].Wallet) + Number(this.value)
+        })
+        .then(() => {
+          this.value = "";
+        })
+        .catch(error => {
+          console.error("error: ", error);
+        });
+
+        store.commit('moneyTransfer', this.value)
     }
   }
 };

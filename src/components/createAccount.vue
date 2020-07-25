@@ -37,25 +37,26 @@ export default {
               this.$router.replace({ name: "Signin" });
             });
         })
-       .catch(err => {
-         this.error = err.message
-       });
+        .catch(err => {
+          this.error = err.message;
+        });
     },
-    refUser(){
-      const userRef = firebase.firestore().collection('users');
+    refUser() {
+      const userRef = firebase.firestore().collection("users");
 
       const initDate = {
         DisplayName: this.displayName,
         Wallet: 2000
       };
 
-      userRef.add(initDate)
-      .then(docRef => {
-        console.log(docRef.id);
-      })
-      .catch(error =>{
-        console.log(error);
-      })
+      userRef
+        .add(initDate)
+        .then(docRef => {
+          console.log(docRef.id);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
 };
