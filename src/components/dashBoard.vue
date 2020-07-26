@@ -36,12 +36,12 @@ import { mapGetters } from "vuex";
 import firebase from "firebase";
 import Modal from "./modal/modal";
 import sendMoneyModal from "./modal/sendMoneyModal";
-import store from '../store/store'
+import store from "../store/store";
 
 export default {
   components: {
     Modal,
-    sendMoneyModal
+    sendMoneyModal,
   },
   data() {
     return {
@@ -50,31 +50,29 @@ export default {
       postUser: "",
       sendMoney: false,
       index: "",
-      value: ""
+      value: "",
     };
   },
   computed: {
     ...mapGetters({
-      currentUser: "user"
-    })
+      currentUser: "user",
+    }),
   },
   created() {
     firebase
       .firestore()
       .collection("users")
       .get()
-      .then(snapshot => {
-        snapshot.forEach(doc => {
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
           const data = {
             id: doc.id,
             name: doc.data().DisplayName,
-            Wallet: doc.data().Wallet
+            Wallet: doc.data().Wallet,
           };
           this.users.push(data);
           const user = doc.data();
           user.id = doc.id;
-          // this.users.push(user)
-          // console.log(user);
         });
       });
   },
@@ -85,7 +83,7 @@ export default {
         .signOut()
         .then(() => {
           this.$router.replace({
-            name: "Signin"
+            name: "Signin",
           });
         });
     },
@@ -101,23 +99,33 @@ export default {
       this.index = index;
     },
     moneyTransfer() {
-      firebase
+      const userRef = firebase
         .firestore()
         .collection("users")
-        .doc(this.users[this.index].id)
-        .update({
-          Wallet: Number(this.users[this.index].Wallet) + Number(this.value)
-        })
-        .then(() => {
-          this.value = "";
-        })
-        .catch(error => {
-          console.error("error: ", error);
-        });
+        .doc(this.users[this.index].id);
+      firebase.firestore().runTransaction((transaction) => {
+        return transaction
+          .get(userRef)
+          .then((doc) => {
+            if (!doc) {
+              alert("user does not exist!");
+            }
 
-        store.commit('moneyTransfer', this.value)
-    }
-  }
+            transaction.update(userRef, {
+              Wallet:
+                Number(this.users[this.index].Wallet) + Number(this.value),
+            });
+          })
+          .then(() => {
+            this.value = "";
+          })
+          .catch((error) => {
+            console.error("error: ", error);
+          });
+      });
+      store.commit("moneyTransfer", this.value);
+    },
+  },
 };
 </script>
 
