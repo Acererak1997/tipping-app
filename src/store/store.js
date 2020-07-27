@@ -29,6 +29,9 @@ export default new Vuex.Store({
     },
     otherUsers(state, otherUsers){
       state.otherUsers.push(otherUsers)
+    },
+    moneyTransfer(state, n){
+      state.user.wallet -= n
     }
   },
   actions: {
